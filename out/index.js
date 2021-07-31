@@ -161,16 +161,18 @@ function haveFilesChanged() {
         var stdout, stderr;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4, exec.exec("git diff", [], {
-                        listeners: {
-                            stdout: function (data) {
-                                stdout += data.toString();
+                case 0:
+                    stdout = "", stderr = "";
+                    return [4, exec.exec("git diff", [], {
+                            listeners: {
+                                stdout: function (data) {
+                                    stdout += data.toString();
+                                },
+                                stderr: function (data) {
+                                    stderr += data.toString();
+                                }
                             },
-                            stderr: function (data) {
-                                stderr += data.toString();
-                            }
-                        },
-                    })];
+                        })];
                 case 1:
                     _a.sent();
                     if (stderr.length > 0)
@@ -188,6 +190,7 @@ function commitAndPush() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    stdout = "", stderr = "";
                     options = {
                         listeners: {
                             stdout: function (data) {

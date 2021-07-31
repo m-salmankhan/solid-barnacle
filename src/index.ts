@@ -80,8 +80,8 @@ registerHandler("format", new class implements Handler {
 });
 
 async function haveFilesChanged() : Promise<Boolean> {
-    let stdout:String,
-        stderr:String;
+    let stdout:String = "",
+        stderr:String = "";
 
     await exec.exec("git diff", [], {
         listeners: {
@@ -101,8 +101,8 @@ async function haveFilesChanged() : Promise<Boolean> {
 }
 
 async function commitAndPush(): Promise<void> {
-    let stdout:String,
-        stderr:String;
+    let stdout:String = "",
+        stderr:String = "";
 
     const options = {
         listeners: {
