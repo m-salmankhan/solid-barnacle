@@ -96,11 +96,24 @@ registerHandler("format", new (function () {
     function class_1() {
     }
     class_1.prototype.run = function (command) {
-        console.log("Starting format command.");
-        var globber = yield glob.create(fileExtensions.join('\n'));
-        var files = yield globber.glob();
-        console.log("====FOUND FILES====");
-        console.log(files);
+        return __awaiter(this, void 0, void 0, function () {
+            var globber, files;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log("Starting format command.");
+                        return [4, glob.create(fileExtensions.join('\n'))];
+                    case 1:
+                        globber = _a.sent();
+                        return [4, globber.glob()];
+                    case 2:
+                        files = _a.sent();
+                        console.log("====FOUND FILES====");
+                        console.log(files);
+                        return [2];
+                }
+            });
+        });
     };
     return class_1;
 }()));

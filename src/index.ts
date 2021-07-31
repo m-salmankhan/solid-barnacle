@@ -65,7 +65,7 @@ function getCommand(): String {
 * Deals with /format command
 * */
 registerHandler("format", new class implements Handler {
-    run(command: string): void {
+    async run(command: string) {
         console.log("Starting format command.");
 
         const globber = await glob.create(fileExtensions.join('\n'));
