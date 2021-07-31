@@ -71,7 +71,7 @@ function run() {
                 case 0: return [4, getBranch()];
                 case 1:
                     branch = _a.sent();
-                    return [4, exec.exec("git show-refs " + branch)];
+                    return [4, exec.exec("git show-ref " + branch)];
                 case 2:
                     _a.sent();
                     return [4, exec.exec("git checkout " + branch)];
