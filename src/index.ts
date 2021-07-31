@@ -7,13 +7,14 @@ const style:string = core.getInput('style');
 const exclude_dirs:string = core.getInput('exclude-dirs');
 const token:string = core.getInput('token');
 
-const octokit = github.getOctokit(token)
+const octokit = github.getOctokit(token);
 
 async function getBranch() {
     try {
         console.log("========= CONTEXT ==========")
         console.log(github.context)
 
+        // Use context info to get the head reference for source branch of PR
         return  octokit.rest.pulls.get({
             owner: github.context.issue.owner,
             repo: github.context.issue.repo,
@@ -28,12 +29,13 @@ async function getBranch() {
     }
 }
 
-async function run() {
-    const branch:string = await getBranch();
-    await exec.exec(`git show-ref`);
-    await exec.exec(`git pull`);
-    await exec.exec(`git show-ref`);
+async function checkoutBranch(branch:String) {
+    await exec.exec(`git fetch`);
     await exec.exec(`git checkout ${branch}`);
+}
+
+async function run() {
+    await checkoutBranch(await getBranch());
 }
 
 run();

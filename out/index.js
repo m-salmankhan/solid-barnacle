@@ -63,26 +63,32 @@ function getBranch() {
         });
     });
 }
-function run() {
+function checkoutBranch(branch) {
     return __awaiter(this, void 0, void 0, function () {
-        var branch;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4, getBranch()];
+                case 0: return [4, exec.exec("git fetch")];
                 case 1:
-                    branch = _a.sent();
-                    return [4, exec.exec("git show-ref")];
-                case 2:
-                    _a.sent();
-                    return [4, exec.exec("git pull")];
-                case 3:
-                    _a.sent();
-                    return [4, exec.exec("git show-ref")];
-                case 4:
                     _a.sent();
                     return [4, exec.exec("git checkout " + branch)];
-                case 5:
+                case 2:
                     _a.sent();
+                    return [2];
+            }
+        });
+    });
+}
+function run() {
+    return __awaiter(this, void 0, void 0, function () {
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _a = checkoutBranch;
+                    return [4, getBranch()];
+                case 1: return [4, _a.apply(void 0, [_b.sent()])];
+                case 2:
+                    _b.sent();
                     return [2];
             }
         });
