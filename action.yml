@@ -1,0 +1,18 @@
+name: 'Auto Format'
+description: 'Auto Format your code'
+inputs:
+  file-extensions:
+    description: 'What file extensions to run through auto-formatter'
+    required: true
+    default: 'c'
+  style:
+    description: 'Style guide'
+    default: 'google'
+    required: true
+  exclude-dirs:
+    description: "Directories you want to exclude from being auto-formatted, relative to document root"
+    required: false
+    default: ""
+runs:
+  using: 'node12'
+  main: 'out/index.js'
