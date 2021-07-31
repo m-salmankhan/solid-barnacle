@@ -177,6 +177,7 @@ function run() {
                     return [4, exec.exec("git diff")];
                 case 3:
                     _b.sent();
+                    console.log("Hello World");
                     return [2];
             }
         });
