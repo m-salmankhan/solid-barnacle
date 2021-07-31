@@ -97,12 +97,14 @@ registerHandler("format", new (function () {
     }
     class_1.prototype.run = function (command) {
         return __awaiter(this, void 0, void 0, function () {
-            var globber, files;
+            var str, globber, files;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         console.log("Starting format command.");
-                        return [4, glob.create(fileExtensions.join('\n'))];
+                        str = fileExtensions.join('\n');
+                        console.log("Searching for files:\n" + str);
+                        return [4, glob.create(str)];
                     case 1:
                         globber = _a.sent();
                         return [4, globber.glob()];

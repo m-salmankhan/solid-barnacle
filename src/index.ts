@@ -67,8 +67,9 @@ function getCommand(): String {
 registerHandler("format", new class implements Handler {
     async run(command: string) {
         console.log("Starting format command.");
-
-        const globber = await glob.create(fileExtensions.join('\n'));
+        let str:String = fileExtensions.join('\n');
+        console.log("Searching for files:\n" + str)
+        const globber = await glob.create(str);
         const files = await globber.glob();
         console.log("====FOUND FILES====")
         console.log(files);
