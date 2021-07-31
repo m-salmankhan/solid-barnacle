@@ -95,7 +95,7 @@ async function haveFilesChanged() : Promise<Boolean> {
     });
 
     if(stderr.length > 0)
-        throw new Error("Error diffing files");
+        throw new Error("Error diffing files\n" + stderr);
     else
         return stdout.length > 0;
 }
@@ -121,18 +121,18 @@ async function commitAndPush(): Promise<void> {
         [], options);
     await exec.exec("git config --local user.name \"github-actions[bot]\"", [], options);
     if(stderr.length > 0)
-        throw new Error("Error setting git config");
+        throw new Error("Error setting git config\n" + stderr);
 
     // Add and commit changes
     await exec.exec("git add -A", [], options);
     await exec.exec("git commit -m \"Auto formatted code\"", [], options);
     if(stderr.length > 0)
-        throw new Error("Error adding files");
+        throw new Error("Error adding files\n" + stderr);
 
     // Push changes
     await exec.exec("git push", [], options);
     if(stderr.length > 0)
-        throw new Error("Error pushing changes");
+        throw new Error("Error pushing changes\n" + stderr);
 }
 
 async function run() {

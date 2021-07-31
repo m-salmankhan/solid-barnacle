@@ -176,7 +176,7 @@ function haveFilesChanged() {
                 case 1:
                     _a.sent();
                     if (stderr.length > 0)
-                        throw new Error("Error diffing files");
+                        throw new Error("Error diffing files\n" + stderr);
                     else
                         return [2, stdout.length > 0];
                     return [2];
@@ -208,7 +208,7 @@ function commitAndPush() {
                 case 2:
                     _a.sent();
                     if (stderr.length > 0)
-                        throw new Error("Error setting git config");
+                        throw new Error("Error setting git config\n" + stderr);
                     return [4, exec.exec("git add -A", [], options)];
                 case 3:
                     _a.sent();
@@ -216,12 +216,12 @@ function commitAndPush() {
                 case 4:
                     _a.sent();
                     if (stderr.length > 0)
-                        throw new Error("Error adding files");
+                        throw new Error("Error adding files\n" + stderr);
                     return [4, exec.exec("git push", [], options)];
                 case 5:
                     _a.sent();
                     if (stderr.length > 0)
-                        throw new Error("Error pushing changes");
+                        throw new Error("Error pushing changes\n" + stderr);
                     return [2];
             }
         });
