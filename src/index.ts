@@ -83,7 +83,7 @@ async function haveFilesChanged() : Promise<Boolean> {
     let stdout:String = "",
         stderr:String = "";
 
-    await exec.exec("git diff", [], {
+    return exec.exec("git diff", [], {
         listeners: {
             stdout: (data: Buffer) => {
                 stdout += data.toString();
@@ -92,47 +92,43 @@ async function haveFilesChanged() : Promise<Boolean> {
                 stderr += data.toString();
             }
         },
-    });
+    }).then((exitCode: number) => {
+        if(exitCode)
+            throw new Error("Failed to diff changes");
 
-    if(stderr.length > 0)
-        throw new Error("Error diffing files\n" + stderr);
-    else
-        return stdout.length > 0;
+        return Promise.resolve(stdout.length > 0);
+    });
 }
 
-async function commitAndPush(): Promise<void> {
-    let stdout:String = "",
-        stderr:String = "";
+async function commitAndPush(): Promise<number> {
+    // Set git email
+    return await exec.exec(
+        "git config --local user.email \"41898282+github-actions[bot]@users.noreply.github.com\""
+    ).then( (exitCode: number) => {
+        if(exitCode)
+            throw new Error("Error setting git config email\n");
+        // Set git name
+        return exec.exec("git config --local user.name \"github-actions[bot]\"");
+    }).then( (exitCode:number) => {
+        if(exitCode)
+            throw new Error("Error setting git config email\n");
 
-    const options = {
-        listeners: {
-            stdout: (data: Buffer) => {
-                stdout += data.toString();
-            },
-            stderr: (data: Buffer) => {
-                stderr += data.toString();
-            }
-        }
-    };
+        // Add and commit modified files
+        return exec.exec("git commit -am \"Auto formatted code\"");
+    }).then((exitCode: number) => {
+        if(exitCode)
+            throw new Error("Error setting git config email\n");
 
-    // Set got configurations
-    await exec.exec(
-        "git config --local user.email \"41898282+github-actions[bot]@users.noreply.github.com\"",
-        [], options);
-    await exec.exec("git config --local user.name \"github-actions[bot]\"", [], options);
-    if(stderr.length > 0)
-        throw new Error("Error setting git config\n" + stderr);
+        // Push commit
+        return exec.exec("git push");
+    }).then((exitCode: number) => {
+        if(exitCode)
+            throw new Error("Error setting git config email\n");
 
-    // Add and commit changes
-    await exec.exec("git add -A", [], options);
-    await exec.exec("git commit -m \"Auto formatted code\"", [], options);
-    if(stderr.length > 0)
-        throw new Error("Error adding files\n" + stderr);
-
-    // Push changes
-    await exec.exec("git push", [], options);
-    if(stderr.length > 0)
-        throw new Error("Error pushing changes\n" + stderr);
+        return Promise.resolve(0);
+    }).catch( (e) => {
+        console.error("Failed to commit and push changes:\n" + e.message);
+    })
 }
 
 async function run() {

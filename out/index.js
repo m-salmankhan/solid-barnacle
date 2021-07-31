@@ -160,69 +160,48 @@ function haveFilesChanged() {
     return __awaiter(this, void 0, void 0, function () {
         var stdout, stderr;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    stdout = "", stderr = "";
-                    return [4, exec.exec("git diff", [], {
-                            listeners: {
-                                stdout: function (data) {
-                                    stdout += data.toString();
-                                },
-                                stderr: function (data) {
-                                    stderr += data.toString();
-                                }
-                            },
-                        })];
-                case 1:
-                    _a.sent();
-                    if (stderr.length > 0)
-                        throw new Error("Error diffing files\n" + stderr);
-                    else
-                        return [2, stdout.length > 0];
-                    return [2];
-            }
+            stdout = "", stderr = "";
+            return [2, exec.exec("git diff", [], {
+                    listeners: {
+                        stdout: function (data) {
+                            stdout += data.toString();
+                        },
+                        stderr: function (data) {
+                            stderr += data.toString();
+                        }
+                    },
+                }).then(function (exitCode) {
+                    if (exitCode)
+                        throw new Error("Failed to diff changes");
+                    return Promise.resolve(stdout.length > 0);
+                })];
         });
     });
 }
 function commitAndPush() {
     return __awaiter(this, void 0, void 0, function () {
-        var stdout, stderr, options;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    stdout = "", stderr = "";
-                    options = {
-                        listeners: {
-                            stdout: function (data) {
-                                stdout += data.toString();
-                            },
-                            stderr: function (data) {
-                                stderr += data.toString();
-                            }
-                        }
-                    };
-                    return [4, exec.exec("git config --local user.email \"41898282+github-actions[bot]@users.noreply.github.com\"", [], options)];
-                case 1:
-                    _a.sent();
-                    return [4, exec.exec("git config --local user.name \"github-actions[bot]\"", [], options)];
-                case 2:
-                    _a.sent();
-                    if (stderr.length > 0)
-                        throw new Error("Error setting git config\n" + stderr);
-                    return [4, exec.exec("git add -A", [], options)];
-                case 3:
-                    _a.sent();
-                    return [4, exec.exec("git commit -m \"Auto formatted code\"", [], options)];
-                case 4:
-                    _a.sent();
-                    if (stderr.length > 0)
-                        throw new Error("Error adding files\n" + stderr);
-                    return [4, exec.exec("git push", [], options)];
-                case 5:
-                    _a.sent();
-                    if (stderr.length > 0)
-                        throw new Error("Error pushing changes\n" + stderr);
-                    return [2];
+                case 0: return [4, exec.exec("git config --local user.email \"41898282+github-actions[bot]@users.noreply.github.com\"").then(function (exitCode) {
+                        if (exitCode)
+                            throw new Error("Error setting git config email\n");
+                        return exec.exec("git config --local user.name \"github-actions[bot]\"");
+                    }).then(function (exitCode) {
+                        if (exitCode)
+                            throw new Error("Error setting git config email\n");
+                        return exec.exec("git commit -am \"Auto formatted code\"");
+                    }).then(function (exitCode) {
+                        if (exitCode)
+                            throw new Error("Error setting git config email\n");
+                        return exec.exec("git push");
+                    }).then(function (exitCode) {
+                        if (exitCode)
+                            throw new Error("Error setting git config email\n");
+                        return Promise.resolve(0);
+                    })["catch"](function (e) {
+                        console.error("Failed to commit and push changes:\n" + e.message);
+                    })];
+                case 1: return [2, _a.sent()];
             }
         });
     });
