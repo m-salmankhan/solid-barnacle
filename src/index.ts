@@ -5,7 +5,7 @@ const glob = require('@actions/glob');
 
 const fileExtensions:[string] = core.getInput('file-extensions').split(" ");
 const style:string = core.getInput('style');
-const exclude_dirs:string = core.getInput('exclude-dirs');
+const exclude_dirs:[string] = core.getInput('exclude-dirs').split(" ");
 const token:string = core.getInput('token');
 
 const octokit = github.getOctokit(token);
@@ -67,9 +67,9 @@ function getCommand(): String {
 registerHandler("format", new class implements Handler {
     async run(command: string) {
         console.log("Starting format command.");
-        let str:String = fileExtensions.map(ext => `**/*.${ext}`).join('\n');
-        console.log("Searching for files:\n" + str)
-        const globber = await glob.create(str + "!**/*.c")
+        let include:String = fileExtensions.map(ext => `**/*.${ext}`).join('\n');
+        let exclude:String = exclude_dirs.map(ext => `!**/${ext}`).join('\n');
+        const globber = await glob.create(`${include}\n${exclude}`)
         for await (const file of globber.globGenerator()) {
             console.log("found:\n");
             console.log(file)

@@ -47,7 +47,7 @@ var exec = require('@actions/exec');
 var glob = require('@actions/glob');
 var fileExtensions = core.getInput('file-extensions').split(" ");
 var style = core.getInput('style');
-var exclude_dirs = core.getInput('exclude-dirs');
+var exclude_dirs = core.getInput('exclude-dirs').split(" ");
 var token = core.getInput('token');
 var octokit = github.getOctokit(token);
 function getBranch() {
@@ -105,14 +105,14 @@ registerHandler("format", new (function () {
     class_1.prototype.run = function (command) {
         var e_1, _a;
         return __awaiter(this, void 0, void 0, function () {
-            var str, globber, _b, _c, file, e_1_1;
+            var include, exclude, globber, _b, _c, file, e_1_1;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
                         console.log("Starting format command.");
-                        str = fileExtensions.map(function (ext) { return "**/*." + ext; }).join('\n');
-                        console.log("Searching for files:\n" + str);
-                        return [4, glob.create(str + "!**/*.c")];
+                        include = fileExtensions.map(function (ext) { return "**/*." + ext; }).join('\n');
+                        exclude = exclude_dirs.map(function (ext) { return "!**/" + ext; }).join('\n');
+                        return [4, glob.create(include + "\n" + exclude)];
                     case 1:
                         globber = _d.sent();
                         _d.label = 2;
