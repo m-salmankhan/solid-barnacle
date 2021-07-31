@@ -259,7 +259,7 @@ function run() {
                 case 8: return [3, 10];
                 case 9:
                     e_2 = _b.sent();
-                    console.error("An unexpected error occurred:\n " + e_2.message);
+                    core.setFailed("An unexpected error occurred:\n " + e_2.message);
                     return [3, 10];
                 case 10: return [2];
             }

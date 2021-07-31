@@ -149,10 +149,10 @@ async function run() {
         if(await haveFilesChanged()) {
             await commitAndPush();
         } else {
-            console.log("Nothing has changed. Nothing to commit!")
+            console.log("Nothing has changed. Nothing to commit!");
         }
     } catch (e) {
-        console.error(`An unexpected error occurred:\n ${e.message}`)
+        core.setFailed(`An unexpected error occurred:\n ${e.message}`);
     }
 }
 
