@@ -242,22 +242,26 @@ function run() {
                     return [4, handler.run(command)];
                 case 3:
                     _b.sent();
+                    console.log("Committing and pushing changes...");
                     _b.label = 4;
                 case 4:
-                    _b.trys.push([4, 8, , 9]);
+                    _b.trys.push([4, 9, , 10]);
                     return [4, haveFilesChanged()];
                 case 5:
                     if (!_b.sent()) return [3, 7];
                     return [4, commitAndPush()];
                 case 6:
                     _b.sent();
-                    _b.label = 7;
-                case 7: return [3, 9];
-                case 8:
+                    return [3, 8];
+                case 7:
+                    console.log("Nothing has changed. Nothing to commit!");
+                    _b.label = 8;
+                case 8: return [3, 10];
+                case 9:
                     e_2 = _b.sent();
                     console.error("An unexpected error occurred:\n " + e_2.message);
-                    return [3, 9];
-                case 9: return [2];
+                    return [3, 10];
+                case 10: return [2];
             }
         });
     });

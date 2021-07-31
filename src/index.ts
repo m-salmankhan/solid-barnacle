@@ -144,9 +144,12 @@ async function run() {
     await checkoutBranch(await getBranch());
     await handler.run(command);
 
+    console.log("Committing and pushing changes...")
     try {
         if(await haveFilesChanged()) {
             await commitAndPush();
+        } else {
+            console.log("Nothing has changed. Nothing to commit!")
         }
     } catch (e) {
         console.error(`An unexpected error occurred:\n ${e.message}`)
