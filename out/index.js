@@ -38,35 +38,41 @@ var core = require('@actions/core');
 var github = require('@actions/github');
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var fileExtensions, style, exclude_dirs, token, octokit, ref;
+        var fileExtensions, style, exclude_dirs, token, octokit, ref, error_1;
         return __generator(this, function (_a) {
-            try {
-                fileExtensions = core.getInput('file-extensions');
-                style = core.getInput('style');
-                exclude_dirs = core.getInput('exclude-dirs');
-                token = core.getInput('token');
-                octokit = github.getOctokit(token);
-                console.log("File Extensions: " + fileExtensions);
-                console.log("Style: " + style);
-                console.log("Exclude: " + exclude_dirs);
-                console.log("token: " + style);
-                console.log("========= CONTEXT ==========");
-                console.log(github.context);
-                console.log("========= issue ==========");
-                console.log(github.context.issue);
-                ref = octokit.rest.pulls.get({
-                    owner: github.context.issue.owner,
-                    repo: github.context.issue.repo,
-                    pull_number: github.context.issue.number,
-                }).then(function (resp) {
-                    return resp.data.head.ref;
-                });
-                console.log(ref);
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    fileExtensions = core.getInput('file-extensions');
+                    style = core.getInput('style');
+                    exclude_dirs = core.getInput('exclude-dirs');
+                    token = core.getInput('token');
+                    octokit = github.getOctokit(token);
+                    console.log("File Extensions: " + fileExtensions);
+                    console.log("Style: " + style);
+                    console.log("Exclude: " + exclude_dirs);
+                    console.log("token: " + style);
+                    console.log("========= CONTEXT ==========");
+                    console.log(github.context);
+                    console.log("========= issue ==========");
+                    console.log(github.context.issue);
+                    return [4, octokit.rest.pulls.get({
+                            owner: github.context.issue.owner,
+                            repo: github.context.issue.repo,
+                            pull_number: github.context.issue.number,
+                        }).then(function (resp) {
+                            return Promise.resolve(resp.data.head.ref);
+                        })];
+                case 1:
+                    ref = _a.sent();
+                    console.log(ref);
+                    return [3, 3];
+                case 2:
+                    error_1 = _a.sent();
+                    core.setFailed(error_1.message);
+                    return [3, 3];
+                case 3: return [2];
             }
-            catch (error) {
-                core.setFailed(error.message);
-            }
-            return [2];
         });
     });
 }
