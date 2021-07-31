@@ -111,7 +111,7 @@ registerHandler("format", new (function () {
                     case 0:
                         console.log("Starting format command.");
                         include = fileExtensions.map(function (ext) { return "**/*." + ext; }).join('\n');
-                        exclude = exclude_dirs.map(function (dor) { return "!" + dir; }).join('\n');
+                        exclude = exclude_dirs.map(function (dir) { return "!" + dir; }).join('\n');
                         return [4, glob.create(include + "\n" + exclude)];
                     case 1:
                         globber = _d.sent();
