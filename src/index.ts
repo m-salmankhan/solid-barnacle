@@ -67,9 +67,9 @@ function getCommand(): String {
 registerHandler("format", new class implements Handler {
     async run(command: string) {
         console.log("Starting format command.");
-        let str:String = fileExtensions.map(ext => `**.${ext}`).join('\n');
+        let str:String = fileExtensions.map(ext => `**/*.${ext}`).join('\n');
         console.log("Searching for files:\n" + str)
-        const globber = await glob.create('**/*.c')
+        const globber = await glob.create(str)
         for await (const file of globber.globGenerator()) {
             console.log("found:\n");
             console.log(file)
