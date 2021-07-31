@@ -102,13 +102,16 @@ registerHandler("format", new (function () {
                 switch (_a.label) {
                     case 0:
                         console.log("Starting format command.");
-                        str = fileExtensions.map(function (ext) { return "/**." + ext; }).join('\n');
+                        return [4, exec.exec("ls -a")];
+                    case 1:
+                        _a.sent();
+                        str = fileExtensions.map(function (ext) { return "**." + ext; }).join('\n');
                         console.log("Searching for files:\n" + str);
                         return [4, glob.create(str)];
-                    case 1:
+                    case 2:
                         globber = _a.sent();
                         return [4, globber.glob()];
-                    case 2:
+                    case 3:
                         files = _a.sent();
                         console.log("====FOUND FILES====");
                         console.log(files);
