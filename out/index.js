@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -41,6 +42,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
     function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
+exports.__esModule = true;
 var core = require('@actions/core');
 var github = require('@actions/github');
 var exec = require('@actions/exec');
@@ -154,9 +156,73 @@ registerHandler("format", new (function () {
     };
     return class_1;
 }()));
+function haveFilesChanged() {
+    return __awaiter(this, void 0, void 0, function () {
+        var stdout, stderr;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, exec.exec("git diff", [], {
+                        listeners: {
+                            stdout: function (data) {
+                                stdout += data.toString();
+                            },
+                            stderr: function (data) {
+                                stderr += data.toString();
+                            }
+                        },
+                    })];
+                case 1:
+                    _a.sent();
+                    if (stderr.length > 0)
+                        throw new Error("Error diffing files");
+                    else
+                        return [2, stdout.length > 0];
+                    return [2];
+            }
+        });
+    });
+}
+function commitAndPush() {
+    return __awaiter(this, void 0, void 0, function () {
+        var stdout, stderr, options;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    options = {
+                        listeners: {
+                            stdout: function (data) {
+                                stdout += data.toString();
+                            },
+                            stderr: function (data) {
+                                stderr += data.toString();
+                            }
+                        }
+                    };
+                    return [4, exec.exec("git config --local user.email \"41898282+github-actions[bot]@users.noreply.github.com\"", [], options)];
+                case 1:
+                    _a.sent();
+                    return [4, exec.exec("git config --local user.name \"github-actions[bot]\"", [], options)];
+                case 2:
+                    _a.sent();
+                    return [4, exec.exec("git add -A", [], options)];
+                case 3:
+                    _a.sent();
+                    return [4, exec.exec("git commit -m \"Auto formatted code\"", [], options)];
+                case 4:
+                    _a.sent();
+                    return [4, exec.exec("git push", [], options)];
+                case 5:
+                    _a.sent();
+                    if (stderr.length > 0)
+                        throw new Error("Error pushing and committing files");
+                    return [2];
+            }
+        });
+    });
+}
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var command, handler, _a;
+        var command, handler, _a, e_2;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -176,11 +242,22 @@ function run() {
                     return [4, handler.run(command)];
                 case 3:
                     _b.sent();
-                    return [4, exec.exec("git diff")];
+                    _b.label = 4;
                 case 4:
+                    _b.trys.push([4, 8, , 9]);
+                    return [4, haveFilesChanged()];
+                case 5:
+                    if (!_b.sent()) return [3, 7];
+                    return [4, commitAndPush()];
+                case 6:
                     _b.sent();
-                    console.log("Hello World");
-                    return [2];
+                    _b.label = 7;
+                case 7: return [3, 9];
+                case 8:
+                    e_2 = _b.sent();
+                    console.error("An unexpected error occurred:\n " + e_2.message);
+                    return [3, 9];
+                case 9: return [2];
             }
         });
     });

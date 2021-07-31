@@ -1,3 +1,5 @@
+import {throws} from "assert";
+
 const core = require('@actions/core');
 const github = require('@actions/github');
 const exec = require('@actions/exec');
@@ -77,6 +79,54 @@ registerHandler("format", new class implements Handler {
     }
 });
 
+async function haveFilesChanged() : Promise<Boolean> {
+    let stdout:String,
+        stderr:String;
+
+    await exec.exec("git diff", [], {
+        listeners: {
+            stdout: (data: Buffer) => {
+                stdout += data.toString();
+            },
+            stderr: (data: Buffer) => {
+                stderr += data.toString();
+            }
+        },
+    });
+
+    if(stderr.length > 0)
+        throw new Error("Error diffing files");
+    else
+        return stdout.length > 0;
+}
+
+async function commitAndPush(): Promise<void> {
+    let stdout:String,
+        stderr:String;
+
+    const options = {
+        listeners: {
+            stdout: (data: Buffer) => {
+                stdout += data.toString();
+            },
+            stderr: (data: Buffer) => {
+                stderr += data.toString();
+            }
+        }
+    };
+
+    await exec.exec(
+        "git config --local user.email \"41898282+github-actions[bot]@users.noreply.github.com\"",
+        [], options);
+    await exec.exec("git config --local user.name \"github-actions[bot]\"", [], options);
+    await exec.exec("git add -A", [], options);
+    await exec.exec("git commit -m \"Auto formatted code\"", [], options);
+    await exec.exec("git push", [], options);
+
+    if(stderr.length > 0)
+        throw new Error("Error pushing and committing files");
+}
+
 async function run() {
     const command: String = getCommand();
 
@@ -93,8 +143,14 @@ async function run() {
 
     await checkoutBranch(await getBranch());
     await handler.run(command);
-    await exec.exec(`git diff`);
-    console.log("Hello World");
+
+    try {
+        if(await haveFilesChanged()) {
+            await commitAndPush();
+        }
+    } catch (e) {
+        console.error(`An unexpected error occurred:\n ${e.message}`)
+    }
 }
 
 run();
