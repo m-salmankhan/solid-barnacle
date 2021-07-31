@@ -74,8 +74,14 @@ function run() {
                     return [4, exec.exec("git show-ref")];
                 case 2:
                     _a.sent();
-                    return [4, exec.exec("git checkout " + branch)];
+                    return [4, exec.exec("git pull")];
                 case 3:
+                    _a.sent();
+                    return [4, exec.exec("git show-ref")];
+                case 4:
+                    _a.sent();
+                    return [4, exec.exec("git checkout " + branch)];
+                case 5:
                     _a.sent();
                     return [2];
             }
