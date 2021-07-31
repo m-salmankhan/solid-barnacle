@@ -21,13 +21,17 @@ async function run() {
         console.log("========= issue ==========")
         console.log(github.context.issue)
 
-        const data = await octokit.rest.pulls.get({
+        const ref = octokit.rest.pulls.get({
             owner: github.context.issue.owner,
             repo: github.context.issue.repo,
             pull_number: github.context.issue.number,
-        });
+        }).then(
+            (resp: { data: { head: { ref: String }; }; }) => {
+                return resp.data.head.ref
+            }
+        )
 
-        console.log(data)
+        console.log(ref)
     } catch (error) {
         core.setFailed(error.message);
     }
