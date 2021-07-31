@@ -34,6 +34,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __asyncValues = (this && this.__asyncValues) || function (o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+};
 var core = require('@actions/core');
 var github = require('@actions/github');
 var exec = require('@actions/exec');
@@ -96,26 +103,49 @@ registerHandler("format", new (function () {
     function class_1() {
     }
     class_1.prototype.run = function (command) {
+        var e_1, _a;
         return __awaiter(this, void 0, void 0, function () {
-            var str, globber, files;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var str, globber, _b, _c, file, e_1_1;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         console.log("Starting format command.");
-                        return [4, exec.exec("ls -a")];
-                    case 1:
-                        _a.sent();
                         str = fileExtensions.map(function (ext) { return "**." + ext; }).join('\n');
                         console.log("Searching for files:\n" + str);
-                        return [4, glob.create(str)];
+                        return [4, glob.create('**')];
+                    case 1:
+                        globber = _d.sent();
+                        _d.label = 2;
                     case 2:
-                        globber = _a.sent();
-                        return [4, globber.glob()];
-                    case 3:
-                        files = _a.sent();
-                        console.log("====FOUND FILES====");
-                        console.log(files);
-                        return [2];
+                        _d.trys.push([2, 7, 8, 13]);
+                        _b = __asyncValues(globber.globGenerator());
+                        _d.label = 3;
+                    case 3: return [4, _b.next()];
+                    case 4:
+                        if (!(_c = _d.sent(), !_c.done)) return [3, 6];
+                        file = _c.value;
+                        console.log("found:\n");
+                        console.log(file);
+                        _d.label = 5;
+                    case 5: return [3, 3];
+                    case 6: return [3, 13];
+                    case 7:
+                        e_1_1 = _d.sent();
+                        e_1 = { error: e_1_1 };
+                        return [3, 13];
+                    case 8:
+                        _d.trys.push([8, , 11, 12]);
+                        if (!(_c && !_c.done && (_a = _b["return"]))) return [3, 10];
+                        return [4, _a.call(_b)];
+                    case 9:
+                        _d.sent();
+                        _d.label = 10;
+                    case 10: return [3, 12];
+                    case 11:
+                        if (e_1) throw e_1.error;
+                        return [7];
+                    case 12: return [7];
+                    case 13: return [2];
                 }
             });
         });
