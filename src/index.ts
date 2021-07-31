@@ -13,8 +13,8 @@ try {
     console.log("========= CONTEXT ==========")
     console.log(github.context)
 
-    console.log("========= PR ==========")
-    console.log(github.context.issue.pull_request)
+    console.log("========= issue ==========")
+    console.log(github.context.issue)
 } catch (error) {
     core.setFailed(error.message);
 }
