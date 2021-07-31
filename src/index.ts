@@ -1,8 +1,9 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const exec = require('@actions/exec');
+const glob = require('@actions/glob');
 
-const fileExtensions:string = core.getInput('file-extensions');
+const fileExtensions:[string] = core.getInput('file-extensions').split(" ");
 const style:string = core.getInput('style');
 const exclude_dirs:string = core.getInput('exclude-dirs');
 const token:string = core.getInput('token');
@@ -65,7 +66,12 @@ function getCommand(): String {
 * */
 registerHandler("format", new class implements Handler {
     run(command: string): void {
-        console.log("RUNNING!!!!")
+        console.log("Starting format command.");
+
+        const globber = await glob.create(fileExtensions.join('\n'));
+        const files = await globber.glob();
+        console.log("====FOUND FILES====")
+        console.log(files);
     }
 });
 

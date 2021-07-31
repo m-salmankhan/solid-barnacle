@@ -37,7 +37,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var core = require('@actions/core');
 var github = require('@actions/github');
 var exec = require('@actions/exec');
-var fileExtensions = core.getInput('file-extensions');
+var glob = require('@actions/glob');
+var fileExtensions = core.getInput('file-extensions').split(" ");
 var style = core.getInput('style');
 var exclude_dirs = core.getInput('exclude-dirs');
 var token = core.getInput('token');
@@ -95,7 +96,11 @@ registerHandler("format", new (function () {
     function class_1() {
     }
     class_1.prototype.run = function (command) {
-        console.log("RUNNING!!!!");
+        console.log("Starting format command.");
+        var globber = yield glob.create(fileExtensions.join('\n'));
+        var files = yield globber.glob();
+        console.log("====FOUND FILES====");
+        console.log(files);
     };
     return class_1;
 }()));
