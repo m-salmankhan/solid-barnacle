@@ -78,17 +78,48 @@ function checkoutBranch(branch) {
         });
     });
 }
+var handlers = new Map();
+function registerHandler(command, handler) {
+    handlers.set(command, handler);
+}
+function selectHandler(command) {
+    return handlers.get(command.substring(1).split(' ')[0]);
+}
+function getCommand() {
+    var comment = github.context.payload.comment.body;
+    if (comment[0] === '/')
+        return comment.split('\n')[0];
+    return null;
+}
+var Format = (function () {
+    function Format() {
+    }
+    Format.prototype.run = function (command) {
+        console.log("RUNNING!!!!");
+    };
+    return Format;
+}());
+registerHandler("format", new Format());
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var _a;
+        var command, handler, _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
+                    command = getCommand();
+                    if (command == null)
+                        return [2];
+                    handler = selectHandler(command);
+                    if (handler == undefined) {
+                        console.log("Command not recognised: \n " + command);
+                        return [2];
+                    }
                     _a = checkoutBranch;
                     return [4, getBranch()];
                 case 1: return [4, _a.apply(void 0, [_b.sent()])];
                 case 2:
                     _b.sent();
+                    handler.run(command);
                     return [2];
             }
         });

@@ -29,13 +29,60 @@ async function getBranch() {
     }
 }
 
-async function checkoutBranch(branch:String) {
+async function checkoutBranch(branch: String) {
     await exec.exec(`git fetch`);
+    // TODO: work out how to add error handling for this
+    //  could fail if uncommitted changes made on current branch
     await exec.exec(`git checkout ${branch}`);
 }
 
+interface Handler {
+    run(command: String): void;
+}
+
+const handlers: Map<String,Handler> = new Map<String, Handler>();
+function registerHandler(command: String, handler: Handler) {
+    handlers.set(command, handler);
+}
+
+// returns handler for that command if found, undefined otherwise
+function selectHandler(command: String): Handler {
+    return handlers.get(
+        command.substring(1).split(' ')[0]
+    );
+}
+
+// Returns first line of comment if it starts with a slash, null otherwise
+function getCommand(): String {
+    const comment:string = github.context.payload.comment.body;
+    if(comment[0] === '/')
+        return comment.split('\n')[0];
+    return null;
+}
+
+class Format implements Handler {
+    run(command: string): void {
+        console.log("RUNNING!!!!")
+    }
+}
+registerHandler("format", new Format());
+
 async function run() {
+    const command: String = getCommand();
+
+    // if just a normal comment -- no command
+    if(command == null)
+        return;
+
+    const handler: Handler = selectHandler(command);
+
+    if(handler == undefined) {
+        console.log(`Command not recognised: \n ${command}`);
+        return;
+    }
+
     await checkoutBranch(await getBranch());
+    handler.run(command);
 }
 
 run();
