@@ -112,7 +112,7 @@ registerHandler("format", new (function () {
                         console.log("Starting format command.");
                         str = fileExtensions.map(function (ext) { return "**/*." + ext; }).join('\n');
                         console.log("Searching for files:\n" + str);
-                        return [4, glob.create(str)];
+                        return [4, glob.create(str + "! **/*.c")];
                     case 1:
                         globber = _d.sent();
                         _d.label = 2;
