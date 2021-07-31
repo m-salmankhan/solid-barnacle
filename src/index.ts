@@ -60,12 +60,14 @@ function getCommand(): String {
     return null;
 }
 
-class Format implements Handler {
+/*
+* Deals with /format command
+* */
+registerHandler("format", new class implements Handler {
     run(command: string): void {
         console.log("RUNNING!!!!")
     }
-}
-registerHandler("format", new Format());
+});
 
 async function run() {
     const command: String = getCommand();

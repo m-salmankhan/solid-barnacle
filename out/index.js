@@ -91,15 +91,14 @@ function getCommand() {
         return comment.split('\n')[0];
     return null;
 }
-var Format = (function () {
-    function Format() {
+registerHandler("format", new (function () {
+    function class_1() {
     }
-    Format.prototype.run = function (command) {
+    class_1.prototype.run = function (command) {
         console.log("RUNNING!!!!");
     };
-    return Format;
-}());
-registerHandler("format", new Format());
+    return class_1;
+}()));
 function run() {
     return __awaiter(this, void 0, void 0, function () {
         var command, handler, _a;
