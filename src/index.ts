@@ -12,6 +12,9 @@ try {
 
     console.log("========= CONTEXT ==========")
     console.log(github.context)
+
+    console.log("========= PR ==========")
+    console.log(github.context.issue.pull_request)
 } catch (error) {
     core.setFailed(error.message);
 }
