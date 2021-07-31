@@ -117,35 +117,37 @@ registerHandler("format", new (function () {
                         globber = _d.sent();
                         _d.label = 2;
                     case 2:
-                        _d.trys.push([2, 7, 8, 13]);
+                        _d.trys.push([2, 8, 9, 14]);
                         _b = __asyncValues(globber.globGenerator());
                         _d.label = 3;
                     case 3: return [4, _b.next()];
                     case 4:
-                        if (!(_c = _d.sent(), !_c.done)) return [3, 6];
+                        if (!(_c = _d.sent(), !_c.done)) return [3, 7];
                         file = _c.value;
-                        console.log("found:\n");
-                        console.log(file);
-                        _d.label = 5;
-                    case 5: return [3, 3];
-                    case 6: return [3, 13];
-                    case 7:
+                        console.log("   Formatting file " + file);
+                        return [4, exec.exec("clang-format -i -style=" + style + " " + file)];
+                    case 5:
+                        _d.sent();
+                        _d.label = 6;
+                    case 6: return [3, 3];
+                    case 7: return [3, 14];
+                    case 8:
                         e_1_1 = _d.sent();
                         e_1 = { error: e_1_1 };
-                        return [3, 13];
-                    case 8:
-                        _d.trys.push([8, , 11, 12]);
-                        if (!(_c && !_c.done && (_a = _b["return"]))) return [3, 10];
-                        return [4, _a.call(_b)];
+                        return [3, 14];
                     case 9:
+                        _d.trys.push([9, , 12, 13]);
+                        if (!(_c && !_c.done && (_a = _b["return"]))) return [3, 11];
+                        return [4, _a.call(_b)];
+                    case 10:
                         _d.sent();
-                        _d.label = 10;
-                    case 10: return [3, 12];
-                    case 11:
+                        _d.label = 11;
+                    case 11: return [3, 13];
+                    case 12:
                         if (e_1) throw e_1.error;
                         return [7];
-                    case 12: return [7];
-                    case 13: return [2];
+                    case 13: return [7];
+                    case 14: return [2];
                 }
             });
         });
@@ -172,6 +174,9 @@ function run() {
                 case 2:
                     _b.sent();
                     handler.run(command);
+                    return [4, exec.exec("git diff")];
+                case 3:
+                    _b.sent();
                     return [2];
             }
         });

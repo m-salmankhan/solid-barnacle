@@ -71,8 +71,8 @@ registerHandler("format", new class implements Handler {
         let exclude:String = exclude_dirs.map(dir => `!${dir}`).join('\n');
         const globber = await glob.create(`${include}\n${exclude}`)
         for await (const file of globber.globGenerator()) {
-            console.log("found:\n");
-            console.log(file)
+            console.log(`   Formatting file ${file}`);
+            await exec.exec(`clang-format -i -style=${style} ${file}`);
         }
     }
 });
@@ -93,6 +93,7 @@ async function run() {
 
     await checkoutBranch(await getBranch());
     handler.run(command);
+    await exec.exec(`git diff`);
 }
 
 run();
