@@ -102,7 +102,7 @@ registerHandler("format", new (function () {
                 switch (_a.label) {
                     case 0:
                         console.log("Starting format command.");
-                        str = fileExtensions.join('\n');
+                        str = fileExtensions.map(function (ext) { return "**." + ext; }).join('\n');
                         console.log("Searching for files:\n" + str);
                         return [4, glob.create(str)];
                     case 1:
