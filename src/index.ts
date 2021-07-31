@@ -92,7 +92,7 @@ async function run() {
     }
 
     await checkoutBranch(await getBranch());
-    handler.run(command);
+    await handler.run(command);
     await exec.exec(`git diff`);
     console.log("Hello World");
 }

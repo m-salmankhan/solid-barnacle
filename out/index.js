@@ -173,9 +173,11 @@ function run() {
                 case 1: return [4, _a.apply(void 0, [_b.sent()])];
                 case 2:
                     _b.sent();
-                    handler.run(command);
-                    return [4, exec.exec("git diff")];
+                    return [4, handler.run(command)];
                 case 3:
+                    _b.sent();
+                    return [4, exec.exec("git diff")];
+                case 4:
                     _b.sent();
                     console.log("Hello World");
                     return [2];
