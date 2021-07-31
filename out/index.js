@@ -207,17 +207,21 @@ function commitAndPush() {
                     return [4, exec.exec("git config --local user.name \"github-actions[bot]\"", [], options)];
                 case 2:
                     _a.sent();
+                    if (stderr.length > 0)
+                        throw new Error("Error setting git config");
                     return [4, exec.exec("git add -A", [], options)];
                 case 3:
                     _a.sent();
                     return [4, exec.exec("git commit -m \"Auto formatted code\"", [], options)];
                 case 4:
                     _a.sent();
+                    if (stderr.length > 0)
+                        throw new Error("Error adding files");
                     return [4, exec.exec("git push", [], options)];
                 case 5:
                     _a.sent();
                     if (stderr.length > 0)
-                        throw new Error("Error pushing and committing files");
+                        throw new Error("Error pushing changes");
                     return [2];
             }
         });

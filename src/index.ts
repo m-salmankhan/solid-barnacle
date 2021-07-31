@@ -115,16 +115,24 @@ async function commitAndPush(): Promise<void> {
         }
     };
 
+    // Set got configurations
     await exec.exec(
         "git config --local user.email \"41898282+github-actions[bot]@users.noreply.github.com\"",
         [], options);
     await exec.exec("git config --local user.name \"github-actions[bot]\"", [], options);
+    if(stderr.length > 0)
+        throw new Error("Error setting git config");
+
+    // Add and commit changes
     await exec.exec("git add -A", [], options);
     await exec.exec("git commit -m \"Auto formatted code\"", [], options);
-    await exec.exec("git push", [], options);
-
     if(stderr.length > 0)
-        throw new Error("Error pushing and committing files");
+        throw new Error("Error adding files");
+
+    // Push changes
+    await exec.exec("git push", [], options);
+    if(stderr.length > 0)
+        throw new Error("Error pushing changes");
 }
 
 async function run() {
