@@ -30,6 +30,7 @@ async function getBranch() {
 
 async function run() {
     const branch:string = await getBranch();
+    await exec.exec(`git show-refs ${branch}`);
     await exec.exec(`git checkout ${branch}`);
 }
 
