@@ -68,7 +68,7 @@ registerHandler("format", new class implements Handler {
     async run(command: string) {
         console.log("Starting format command.");
         let include:String = fileExtensions.map(ext => `**/*.${ext}`).join('\n');
-        let exclude:String = exclude_dirs.map(ext => `!**/${ext}`).join('\n');
+        let exclude:String = exclude_dirs.map(dor => `!${dir}`).join('\n');
         const globber = await glob.create(`${include}\n${exclude}`)
         for await (const file of globber.globGenerator()) {
             console.log("found:\n");
