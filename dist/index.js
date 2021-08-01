@@ -40,6 +40,7 @@ var core = require("@actions/core");
 var handlers_1 = require("./handlers/handlers");
 var git_commands_1 = require("./git-commands");
 var helpers_1 = require("./helpers");
+var init_1 = require("./init");
 function run() {
     return __awaiter(this, void 0, void 0, function () {
         var command, handler, _a, e_1;
@@ -75,5 +76,5 @@ function run() {
         });
     });
 }
-run();
+init_1.init().then(run);
 //# sourceMappingURL=index.js.map

@@ -2,7 +2,9 @@
 // Gets the branch that the PR is merging from
 import {getOctokit, context} from "@actions/github";
 import * as core from "@actions/core";
+import {exec} from "@actions/exec";
 import {token} from "./inputs";
+import {requiredBinaries} from "./constants";
 
 export const octokit = getOctokit(token);
 

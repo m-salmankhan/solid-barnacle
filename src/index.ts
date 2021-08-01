@@ -3,6 +3,8 @@ import * as core from "@actions/core";
 import {Handler, handlers} from "./handlers/handlers";
 import {checkoutBranch} from "./git-commands";
 import {getCommand, getBranch} from "./helpers";
+import {init} from "./init";
+
 
 async function run():Promise<void> {
     const command: string = getCommand();
@@ -26,4 +28,4 @@ async function run():Promise<void> {
     }
 }
 
-run();
+init().then(run);
