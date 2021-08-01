@@ -41,7 +41,6 @@ class HandleFormat implements Handler {
     console.log(`Starting command: ${command}`);
 
     for await (const file of await HandleFormat.findFiles()) {
-      console.log(`   Formatting file ${file}`);
       const ext = path.extname(file).substring(1);
       let exitCode;
       // if it's one of the languages formatted by clang
