@@ -50,7 +50,7 @@ class HandleFormat implements Handler {
                 if (inputs.pythonStyle.toLowerCase() == "black")
                     exitCode = await exec(`black ${file}`)
                 else
-                    exitCode = await exec(`yapf -i -style=${inputs.pythonStyle} ${file}`)
+                    exitCode = await exec(`yapf -i --style=${inputs.pythonStyle} ${file}`)
             else
                 throw new Error(`*.${ext} files are not yet supported`);
 
