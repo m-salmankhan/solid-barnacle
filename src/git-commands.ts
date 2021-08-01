@@ -1,3 +1,7 @@
+/*
+* Contains functions to make system calls to git
+* */
+
 // Checkout branch with provided string
 import {exec} from "@actions/exec";
 
