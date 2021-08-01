@@ -67,7 +67,7 @@ function ensureDependenciesResolved() {
             if (res === false)
                 failed.push(constants_1.requiredBinaries[index]);
         });
-        if (failed !== [])
+        if (failed.length > 0)
             core.setFailed("The following commands were unavailable:\n\t" + failed.join("\n\t"));
     });
 }

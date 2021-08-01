@@ -22,7 +22,7 @@ function ensureDependenciesResolved(): Promise<void> {
             if(res===false)
                 failed.push(requiredBinaries[index]); // Promise.all preserves order, so this is works
         });
-        if(failed!==[])
+        if(failed.length > 0)
             core.setFailed("The following commands were unavailable:\n\t" + failed.join("\n\t"));
     });
 }
