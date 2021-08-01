@@ -64,7 +64,7 @@ exports.getBranch = getBranch;
 function getCommand() {
     var comment = github_1.context.payload.comment.body;
     if (comment[0] === '/')
-        return comment.split('\n')[0];
+        return comment.split(/[\n\r]/)[0];
     return null;
 }
 exports.getCommand = getCommand;

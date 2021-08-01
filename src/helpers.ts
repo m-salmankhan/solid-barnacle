@@ -27,6 +27,6 @@ export async function getBranch() {
 export function getCommand(): string {
     const comment:string = context.payload.comment.body;
     if(comment[0] === '/')
-        return comment.split('\n')[0];
+        return comment.split(/[\n\r]/)[0];
     return null;
 }
