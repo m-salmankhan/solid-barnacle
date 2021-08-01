@@ -8,31 +8,30 @@ const constants_1 = require("../constants");
 const inputs = require("../inputs");
 const git_commands_1 = require("../git-commands");
 /*
-* Deals with /format command
-* */
+ * Deals with /format command
+ * */
 class HandleFormat {
     static async findFiles() {
-        let include = inputs.fileExtensions
+        const include = inputs.fileExtensions
             .map((ext) => `**/*.${ext}`)
             .join('\n');
-        let exclude = inputs.exclude_dirs
+        const exclude = inputs.exclude_dirs
             .map((dir) => `!${dir}`)
             .join('\n');
-        return await glob_1.create(`${include}\n${exclude}`)
-            .then((g) => g.globGenerator());
+        return await glob_1.create(`${include}\n${exclude}`).then((g) => g.globGenerator());
     }
     static async commitAndPush() {
-        console.log("Committing and pushing changes...");
+        console.log('Committing and pushing changes...');
         if (await git_commands_1.haveFilesChanged()) {
-            await git_commands_1.commit("Auto-formatted Code");
+            await git_commands_1.commit('Auto-formatted Code');
             await git_commands_1.push();
         }
         else {
-            console.log("Nothing has changed. Nothing to commit!");
+            console.log('Nothing has changed. Nothing to commit!');
         }
     }
     async handle(command) {
-        console.log("Starting format command.");
+        console.log(`Starting command: ${command}`);
         for await (const file of await HandleFormat.findFiles()) {
             console.log(`   Formatting file ${file}`);
             const ext = path.extname(file).substring(1);
@@ -42,7 +41,7 @@ class HandleFormat {
                 exitCode = await exec_1.exec(`clang-format -i -style=${inputs.cStyle} ${file}`);
             // if it's python
             else if (constants_1.pythonExtensions.includes(ext))
-                if (inputs.pythonStyle.toLowerCase() == "black")
+                if (inputs.pythonStyle.toLowerCase() === 'black')
                     exitCode = await exec_1.exec(`black ${file}`);
                 else
                     exitCode = await exec_1.exec(`yapf -i --style=${inputs.pythonStyle} ${file}`);
@@ -54,5 +53,5 @@ class HandleFormat {
         await HandleFormat.commitAndPush();
     }
 }
-handlers_1.handlers.registerHandler("format", new HandleFormat());
+handlers_1.handlers.registerHandler('format', new HandleFormat());
 //# sourceMappingURL=format.js.map

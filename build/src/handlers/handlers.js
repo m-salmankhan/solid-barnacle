@@ -10,8 +10,8 @@ class Handlers {
     }
     // returns handler for that command if found, undefined otherwise
     selectHandler(command) {
-        let handler = this.list.get(command.substring(1).split(' ')[0]);
-        if (handler != undefined)
+        const handler = this.list.get(command.substring(1).split(' ')[0]);
+        if (handler !== undefined)
             return handler;
         return null;
     }

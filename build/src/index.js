@@ -8,10 +8,10 @@ const init_1 = require("./init");
 async function run() {
     const command = helpers_1.getCommand();
     // if just a normal comment -- no command
-    if (command == "")
+    if (command === '')
         return;
     const handler = handlers_1.handlers.selectHandler(command);
-    if (handler == null) {
+    if (handler === null) {
         console.log(`Command not recognised:\n${command}`);
         return;
     }

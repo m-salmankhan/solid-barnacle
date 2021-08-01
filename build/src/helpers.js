@@ -9,11 +9,13 @@ exports.octokit = github_1.getOctokit(inputs_1.token);
 async function getBranch() {
     try {
         // Use context info to get the head reference for source branch of PR
-        return exports.octokit.rest.pulls.get({
+        return exports.octokit.rest.pulls
+            .get({
             owner: github_1.context.issue.owner,
             repo: github_1.context.issue.repo,
             pull_number: github_1.context.issue.number,
-        }).then((resp) => {
+        })
+            .then((resp) => {
             return Promise.resolve(resp.data.head.ref);
         });
     }
@@ -25,12 +27,12 @@ async function getBranch() {
 exports.getBranch = getBranch;
 // Returns first line of comment if it starts with a slash, empty string otherwise
 function getCommand() {
-    if (github_1.context.payload.comment == undefined)
-        throw new Error("context.payload.comment is undefined.");
+    if (github_1.context.payload.comment === undefined)
+        throw new Error('context.payload.comment is undefined.');
     const comment = github_1.context.payload.comment.body;
     if (comment[0] === '/')
         return comment.split(/[\n\r]/)[0];
-    return "";
+    return '';
 }
 exports.getCommand = getCommand;
 //# sourceMappingURL=helpers.js.map
