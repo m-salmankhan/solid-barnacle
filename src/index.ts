@@ -45,6 +45,7 @@ function registerHandler(command: String, handler: Handler) {
 function selectHandler(command: String): Handler {
     console.log("KEY:=========")
     console.log(command.substring(1).split(' ')[0]);
+    console.log(handlers);
     return handlers.get(
         command.substring(1).split(' ')[0]
     );
@@ -179,7 +180,7 @@ async function run():Promise<void> {
     const handler: Handler = selectHandler(command);
 
     if(handler == undefined) {
-        console.log(`Command not recognised: \n ${command}`);
+        console.log(`Command not recognised:\n${command}`);
         return;
     }
 

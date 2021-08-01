@@ -79,6 +79,7 @@ function registerHandler(command, handler) {
 function selectHandler(command) {
     console.log("KEY:=========");
     console.log(command.substring(1).split(' ')[0]);
+    console.log(handlers);
     return handlers.get(command.substring(1).split(' ')[0]);
 }
 function getCommand() {
@@ -261,7 +262,7 @@ function run() {
                         return [2];
                     handler = selectHandler(command);
                     if (handler == undefined) {
-                        console.log("Command not recognised: \n " + command);
+                        console.log("Command not recognised:\n" + command);
                         return [2];
                     }
                     _b.label = 1;
