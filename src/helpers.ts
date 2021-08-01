@@ -2,13 +2,11 @@
 // Gets the branch that the PR is merging from
 import {getOctokit, context} from "@actions/github";
 import * as core from "@actions/core";
-import {exec} from "@actions/exec";
 import {token} from "./inputs";
-import {requiredBinaries} from "./constants";
 
 export const octokit = getOctokit(token);
 
-export async function getBranch() {
+export async function getBranch(): Promise<string> {
     try {
         // Use context info to get the head reference for source branch of PR
         return  octokit.rest.pulls.get({
@@ -22,13 +20,17 @@ export async function getBranch() {
         )
     } catch (error) {
         core.setFailed(error.message);
+        return Promise.reject();
     }
 }
 
-// Returns first line of comment if it starts with a slash, null otherwise
+// Returns first line of comment if it starts with a slash, empty string otherwise
 export function getCommand(): string {
+    if(context.payload.comment == undefined)
+        throw new Error("context.payload.comment is undefined.");
+
     const comment:string = context.payload.comment.body;
     if(comment[0] === '/')
         return comment.split(/[\n\r]/)[0];
-    return null;
+    return "";
 }

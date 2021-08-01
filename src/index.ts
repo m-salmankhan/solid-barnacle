@@ -10,12 +10,12 @@ async function run():Promise<void> {
     const command: string = getCommand();
 
     // if just a normal comment -- no command
-    if(command == null)
+    if(command == "")
         return;
 
-    const handler: Handler = handlers.selectHandler(command);
+    const handler: (Handler | null) = handlers.selectHandler(command);
 
-    if(handler == undefined) {
+    if(handler == null) {
         console.log(`Command not recognised:\n${command}`);
         return;
     }
