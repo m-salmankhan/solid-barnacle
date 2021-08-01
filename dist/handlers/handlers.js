@@ -17,4 +17,5 @@ var Handlers = (function () {
     return Handlers;
 }());
 exports.handlers = new Handlers();
+require("./format");
 //# sourceMappingURL=handlers.js.map

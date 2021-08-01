@@ -21,3 +21,6 @@ class Handlers {
 }
 
 export const handlers = new Handlers();
+
+// Import all the handlers
+import "./format";
