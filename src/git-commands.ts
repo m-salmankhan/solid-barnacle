@@ -24,9 +24,17 @@ export async function checkoutBranch(branch: string): Promise<void> {
 // Check output of git diff to see if files have changed
 // TODO: there has to be a better way of doing this.
 export async function haveFilesChanged(): Promise<Boolean> {
-  return exec('git diff --exit-code').then((exitCode: number): Promise<boolean> => {
-    console.log("GIT DIFF RETURNED " + exitCode)
-    return Promise.resolve(!exitCode);
+  let stdout = '';
+  return exec('git diff', [], {
+    listeners: {
+      stdout: (data: Buffer) => {
+        stdout += data.toString();
+      },
+    },
+  }).then((exitCode: number): Promise<boolean> => {
+    if (exitCode) throw new Error('Failed to diff changes');
+
+    return Promise.resolve(stdout.length > 0);
   });
 }
 
