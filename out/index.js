@@ -45,10 +45,13 @@ var core = require('@actions/core');
 var github = require('@actions/github');
 var exec = require('@actions/exec');
 var glob = require('@actions/glob');
+var path = require('path');
 var fileExtensions = core.getInput('file-extensions').split(" ");
-var style = core.getInput('style');
+var cStyle = core.getInput('c-style');
+var pythonStyle = core.getInput('python-style');
 var exclude_dirs = core.getInput('exclude-dirs').split(" ");
 var token = core.getInput('token');
+var clangExtensions = ["c", "h", "cpp", "java", "json", "js"];
 var octokit = github.getOctokit(token);
 function getBranch() {
     return __awaiter(this, void 0, void 0, function () {
@@ -88,7 +91,7 @@ registerHandler("format", new (function () {
     class_1.prototype.run = function (command) {
         var e_1, _a;
         return __awaiter(this, void 0, void 0, function () {
-            var include, exclude, globber, _b, _c, file, e_1_1;
+            var include, exclude, globber, _b, _c, file, ext, e_1_1;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -100,49 +103,59 @@ registerHandler("format", new (function () {
                         globber = _d.sent();
                         _d.label = 2;
                     case 2:
-                        _d.trys.push([2, 8, 9, 14]);
+                        _d.trys.push([2, 9, 10, 15]);
                         _b = __asyncValues(globber.globGenerator());
                         _d.label = 3;
                     case 3: return [4, _b.next()];
                     case 4:
-                        if (!(_c = _d.sent(), !_c.done)) return [3, 7];
+                        if (!(_c = _d.sent(), !_c.done)) return [3, 8];
                         file = _c.value;
                         console.log("   Formatting file " + file);
-                        return [4, exec.exec("clang-format -i -style=" + style + " " + file)];
+                        ext = path.extname(file).substring(1);
+                        if (!clangExtensions.includes(ext)) return [3, 6];
+                        return [4, exec.exec("clang-format -i -style=" + cStyle + " " + file)];
                     case 5:
                         _d.sent();
-                        _d.label = 6;
-                    case 6: return [3, 3];
-                    case 7: return [3, 14];
-                    case 8:
+                        return [3, 7];
+                    case 6:
+                        if (ext) {
+                            throw new Error("Python not yet supported");
+                        }
+                        else {
+                            throw new Error("*." + ext + " files are not yet supported");
+                        }
+                        _d.label = 7;
+                    case 7: return [3, 3];
+                    case 8: return [3, 15];
+                    case 9:
                         e_1_1 = _d.sent();
                         e_1 = { error: e_1_1 };
-                        return [3, 14];
-                    case 9:
-                        _d.trys.push([9, , 12, 13]);
-                        if (!(_c && !_c.done && (_a = _b["return"]))) return [3, 11];
-                        return [4, _a.call(_b)];
+                        return [3, 15];
                     case 10:
+                        _d.trys.push([10, , 13, 14]);
+                        if (!(_c && !_c.done && (_a = _b["return"]))) return [3, 12];
+                        return [4, _a.call(_b)];
+                    case 11:
                         _d.sent();
-                        _d.label = 11;
-                    case 11: return [3, 13];
-                    case 12:
+                        _d.label = 12;
+                    case 12: return [3, 14];
+                    case 13:
                         if (e_1) throw e_1.error;
                         return [7];
-                    case 13: return [7];
-                    case 14:
+                    case 14: return [7];
+                    case 15:
                         console.log("Committing and pushing changes...");
                         return [4, haveFilesChanged()];
-                    case 15:
-                        if (!_d.sent()) return [3, 17];
-                        return [4, commit("Auto-formatted Code")];
                     case 16:
-                        _d.sent();
-                        return [3, 18];
+                        if (!_d.sent()) return [3, 18];
+                        return [4, commit("Auto-formatted Code")];
                     case 17:
+                        _d.sent();
+                        return [3, 19];
+                    case 18:
                         console.log("Nothing has changed. Nothing to commit!");
-                        _d.label = 18;
-                    case 18: return [2];
+                        _d.label = 19;
+                    case 19: return [2];
                 }
             });
         });

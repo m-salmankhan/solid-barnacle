@@ -2,11 +2,15 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const exec = require('@actions/exec');
 const glob = require('@actions/glob');
+const path = require('path');
 
-const fileExtensions:[string] = core.getInput('file-extensions').split(" ");
-const style:string = core.getInput('style');
-const exclude_dirs:[string] = core.getInput('exclude-dirs').split(" ");
+const fileExtensions:Array<string> = core.getInput('file-extensions').split(" ");
+const cStyle:string = core.getInput('c-style');
+const pythonStyle:string = core.getInput('python-style');
+const exclude_dirs: Array<string> = core.getInput('exclude-dirs').split(" ");
 const token:string = core.getInput('token');
+
+const clangExtensions: Array<string> = ["c", "h", "cpp", "java", "json", "js"];
 
 const octokit = github.getOctokit(token);
 
@@ -63,7 +67,15 @@ registerHandler("format", new class implements Handler {
         const globber = await glob.create(`${include}\n${exclude}`)
         for await (const file of globber.globGenerator()) {
             console.log(`   Formatting file ${file}`);
-            await exec.exec(`clang-format -i -style=${style} ${file}`);
+            const ext = path.extname(file).substring(1);
+            // if it's one of the languages formatted by clang
+            if(clangExtensions.includes(ext))
+                await exec.exec(`clang-format -i -style=${cStyle} ${file}`);
+            else if(ext) {
+                throw new Error("Python not yet supported");
+            } else {
+                throw new Error(`*.${ext} files are not yet supported`);
+            }
         }
 
         console.log("Committing and pushing changes...")
