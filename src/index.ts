@@ -43,6 +43,8 @@ function registerHandler(command: String, handler: Handler) {
 
 // returns handler for that command if found, undefined otherwise
 function selectHandler(command: String): Handler {
+    console.log("KEY:=========")
+    console.log(command.substring(1).split(' ')[0]);
     return handlers.get(
         command.substring(1).split(' ')[0]
     );

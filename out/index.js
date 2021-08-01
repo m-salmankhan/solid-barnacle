@@ -77,6 +77,8 @@ function registerHandler(command, handler) {
     handlers.set(command, handler);
 }
 function selectHandler(command) {
+    console.log("KEY:=========");
+    console.log(command.substring(1).split(' ')[0]);
     return handlers.get(command.substring(1).split(' ')[0]);
 }
 function getCommand() {
