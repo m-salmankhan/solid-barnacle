@@ -1,5 +1,3 @@
-import {throws} from "assert";
-
 const core = require('@actions/core');
 const github = require('@actions/github');
 const exec = require('@actions/exec');
@@ -12,31 +10,22 @@ const token:string = core.getInput('token');
 
 const octokit = github.getOctokit(token);
 
+// Gets the branch that the PR is merging from
 async function getBranch() {
     try {
-        console.log("========= CONTEXT ==========")
-        console.log(github.context)
-
         // Use context info to get the head reference for source branch of PR
         return  octokit.rest.pulls.get({
             owner: github.context.issue.owner,
             repo: github.context.issue.repo,
             pull_number: github.context.issue.number,
         }).then(
-            (resp: { data: { head: { ref: String }; }; }) => {
+            (resp: { data: { head: { ref: String }; }; }): Promise<String> => {
                 return Promise.resolve(resp.data.head.ref);
             }
         )
     } catch (error) {
         core.setFailed(error.message);
     }
-}
-
-async function checkoutBranch(branch: String) {
-    await exec.exec(`git fetch`);
-    // TODO: work out how to add error handling for this
-    //  could fail if uncommitted changes made on current branch
-    await exec.exec(`git checkout ${branch}`);
 }
 
 interface Handler {
@@ -76,9 +65,37 @@ registerHandler("format", new class implements Handler {
             console.log(`   Formatting file ${file}`);
             await exec.exec(`clang-format -i -style=${style} ${file}`);
         }
+
+        console.log("Committing and pushing changes...")
+
+        if(await haveFilesChanged()) {
+            await commit("Auto-formatted Code");
+        } else {
+            console.log("Nothing has changed. Nothing to commit!");
+        }
     }
 });
 
+// Checkout branch with provided string
+async function checkoutBranch(branch: String): Promise<void> {
+    await exec.exec(`git fetch`)
+        .then((exitCode: number): Promise<number> => {
+            if(exitCode)
+                throw new Error("Failed to fetch from remote.");
+
+            // Checkout branch
+            // TODO: Is this a security vulnerability? Escaping handled by library
+            return exec.exec(`git checkout`, [branch]);
+        }).then((exitCode: number):Promise<void> => {
+            if(exitCode)
+                throw new Error("Failed to fetch from remote.");
+
+            return Promise.resolve();
+        });
+}
+
+// Check output of git diff to see if files have changed
+// TODO: there has to be a better way of doing this.
 async function haveFilesChanged() : Promise<Boolean> {
     let stdout:String = "",
         stderr:String = "";
@@ -92,7 +109,7 @@ async function haveFilesChanged() : Promise<Boolean> {
                 stderr += data.toString();
             }
         },
-    }).then((exitCode: number) => {
+    }).then((exitCode: number): Promise<boolean> => {
         if(exitCode)
             throw new Error("Failed to diff changes");
 
@@ -100,38 +117,45 @@ async function haveFilesChanged() : Promise<Boolean> {
     });
 }
 
-async function commitAndPush(): Promise<number> {
+async function commit(commitMessage: String): Promise<number> {
     // Set git email
     return await exec.exec(
         "git config --local user.email \"41898282+github-actions[bot]@users.noreply.github.com\""
-    ).then( (exitCode: number) => {
+    ).then( (exitCode: number): Promise<number> => {
         if(exitCode)
             throw new Error("Error setting git config email\n");
         // Set git name
         return exec.exec("git config --local user.name \"github-actions[bot]\"");
-    }).then( (exitCode:number) => {
+    }).then( (exitCode:number): Promise<number> => {
         if(exitCode)
-            throw new Error("Error setting git config email\n");
+            throw new Error("Error setting git config name\n");
 
         // Add and commit modified files
-        return exec.exec("git commit -am \"Auto formatted code\"");
-    }).then((exitCode: number) => {
+        return exec.exec("git commit -am", [commitMessage]);
+    }).then((exitCode: number): Promise<number> => {
         if(exitCode)
-            throw new Error("Error setting git config email\n");
+            throw new Error("Error committing\n");
 
         // Push commit
         return exec.exec("git push");
-    }).then((exitCode: number) => {
+    }).then((exitCode: number): Promise<number> => {
         if(exitCode)
-            throw new Error("Error setting git config email\n");
+            throw new Error("Error pushing code\n");
 
         return Promise.resolve(0);
-    }).catch( (e) => {
-        console.error("Failed to commit and push changes:\n" + e.message);
+    }).catch( (e:Error) => {
+        // Catch whatever error and re-throw to show which step it failed on
+        throw new Error("Failed to commit changes:\n" + e.message);
     })
 }
 
-async function run() {
+async function push(): Promise<void> {
+    const exitCode:number = await exec.exec("git push");
+    if(exitCode)
+        throw new Error("Error pushing code\n");
+}
+
+async function run():Promise<void> {
     const command: String = getCommand();
 
     // if just a normal comment -- no command
@@ -145,16 +169,10 @@ async function run() {
         return;
     }
 
-    await checkoutBranch(await getBranch());
-    await handler.run(command);
-
-    console.log("Committing and pushing changes...")
     try {
-        if(await haveFilesChanged()) {
-            await commitAndPush();
-        } else {
-            console.log("Nothing has changed. Nothing to commit!");
-        }
+        await checkoutBranch(await getBranch());
+        await handler.run(command);
+        await push();
     } catch (e) {
         core.setFailed(`An unexpected error occurred:\n ${e.message}`);
     }

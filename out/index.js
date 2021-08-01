@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -42,7 +41,6 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
     function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
-exports.__esModule = true;
 var core = require('@actions/core');
 var github = require('@actions/github');
 var exec = require('@actions/exec');
@@ -56,8 +54,6 @@ function getBranch() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             try {
-                console.log("========= CONTEXT ==========");
-                console.log(github.context);
                 return [2, octokit.rest.pulls.get({
                         owner: github.context.issue.owner,
                         repo: github.context.issue.repo,
@@ -70,21 +66,6 @@ function getBranch() {
                 core.setFailed(error.message);
             }
             return [2];
-        });
-    });
-}
-function checkoutBranch(branch) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, exec.exec("git fetch")];
-                case 1:
-                    _a.sent();
-                    return [4, exec.exec("git checkout " + branch)];
-                case 2:
-                    _a.sent();
-                    return [2];
-            }
         });
     });
 }
@@ -149,13 +130,46 @@ registerHandler("format", new (function () {
                         if (e_1) throw e_1.error;
                         return [7];
                     case 13: return [7];
-                    case 14: return [2];
+                    case 14:
+                        console.log("Committing and pushing changes...");
+                        return [4, haveFilesChanged()];
+                    case 15:
+                        if (!_d.sent()) return [3, 17];
+                        return [4, commit("Auto-formatted Code")];
+                    case 16:
+                        _d.sent();
+                        return [3, 18];
+                    case 17:
+                        console.log("Nothing has changed. Nothing to commit!");
+                        _d.label = 18;
+                    case 18: return [2];
                 }
             });
         });
     };
     return class_1;
 }()));
+function checkoutBranch(branch) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, exec.exec("git fetch")
+                        .then(function (exitCode) {
+                        if (exitCode)
+                            throw new Error("Failed to fetch from remote.");
+                        return exec.exec("git checkout", [branch]);
+                    }).then(function (exitCode) {
+                        if (exitCode)
+                            throw new Error("Failed to fetch from remote.");
+                        return Promise.resolve();
+                    })];
+                case 1:
+                    _a.sent();
+                    return [2];
+            }
+        });
+    });
+}
 function haveFilesChanged() {
     return __awaiter(this, void 0, void 0, function () {
         var stdout, stderr;
@@ -178,7 +192,7 @@ function haveFilesChanged() {
         });
     });
 }
-function commitAndPush() {
+function commit(commitMessage) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -188,20 +202,35 @@ function commitAndPush() {
                         return exec.exec("git config --local user.name \"github-actions[bot]\"");
                     }).then(function (exitCode) {
                         if (exitCode)
-                            throw new Error("Error setting git config email\n");
-                        return exec.exec("git commit -am \"Auto formatted code\"");
+                            throw new Error("Error setting git config name\n");
+                        return exec.exec("git commit -am", [commitMessage]);
                     }).then(function (exitCode) {
                         if (exitCode)
-                            throw new Error("Error setting git config email\n");
+                            throw new Error("Error committing\n");
                         return exec.exec("git push");
                     }).then(function (exitCode) {
                         if (exitCode)
-                            throw new Error("Error setting git config email\n");
+                            throw new Error("Error pushing code\n");
                         return Promise.resolve(0);
                     })["catch"](function (e) {
-                        console.error("Failed to commit and push changes:\n" + e.message);
+                        throw new Error("Failed to commit changes:\n" + e.message);
                     })];
                 case 1: return [2, _a.sent()];
+            }
+        });
+    });
+}
+function push() {
+    return __awaiter(this, void 0, void 0, function () {
+        var exitCode;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, exec.exec("git push")];
+                case 1:
+                    exitCode = _a.sent();
+                    if (exitCode)
+                        throw new Error("Error pushing code\n");
+                    return [2];
             }
         });
     });
@@ -220,34 +249,26 @@ function run() {
                         console.log("Command not recognised: \n " + command);
                         return [2];
                     }
+                    _b.label = 1;
+                case 1:
+                    _b.trys.push([1, 6, , 7]);
                     _a = checkoutBranch;
                     return [4, getBranch()];
-                case 1: return [4, _a.apply(void 0, [_b.sent()])];
-                case 2:
-                    _b.sent();
-                    return [4, handler.run(command)];
+                case 2: return [4, _a.apply(void 0, [_b.sent()])];
                 case 3:
                     _b.sent();
-                    console.log("Committing and pushing changes...");
-                    _b.label = 4;
+                    return [4, handler.run(command)];
                 case 4:
-                    _b.trys.push([4, 9, , 10]);
-                    return [4, haveFilesChanged()];
-                case 5:
-                    if (!_b.sent()) return [3, 7];
-                    return [4, commitAndPush()];
-                case 6:
                     _b.sent();
-                    return [3, 8];
-                case 7:
-                    console.log("Nothing has changed. Nothing to commit!");
-                    _b.label = 8;
-                case 8: return [3, 10];
-                case 9:
+                    return [4, push()];
+                case 5:
+                    _b.sent();
+                    return [3, 7];
+                case 6:
                     e_2 = _b.sent();
                     core.setFailed("An unexpected error occurred:\n " + e_2.message);
-                    return [3, 10];
-                case 10: return [2];
+                    return [3, 7];
+                case 7: return [2];
             }
         });
     });
