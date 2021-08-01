@@ -11,9 +11,6 @@ class Handlers {
 
     // returns handler for that command if found, undefined otherwise
     public selectHandler(command: string): Handler {
-        console.log("KEY:=========")
-        console.log(command.substring(1).split(' ')[0]);
-        console.log(this.list);
         return this.list.get(
             command.substring(1).split(' ')[0]
         );
