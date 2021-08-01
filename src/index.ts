@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
-import {Handler, handlers} from "./handlers/Handler";
+import {Handlers, handlers} from "./handlers/handlers";
 import {token} from "./inputs";
 import {checkoutBranch} from "./git-commands";
 
@@ -40,7 +40,7 @@ async function run():Promise<void> {
     if(command == null)
         return;
 
-    const handler: Handler = handlers.selectHandler(command);
+    const handler: Handlers = handlers.selectHandler(command);
 
     if(handler == undefined) {
         console.log(`Command not recognised:\n${command}`);

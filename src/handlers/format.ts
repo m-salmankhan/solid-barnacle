@@ -2,7 +2,7 @@ const glob = require('@actions/glob');
 const exec = require('@actions/exec');
 const path = require('path');
 
-import {Handler, handlers} from "./Handler";
+import {Handler, handlers} from "./handlers";
 import {clangExtensions} from "../constants";
 import * as inputs from "../inputs";
 import {haveFilesChanged, commit, push} from "../git-commands";

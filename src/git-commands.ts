@@ -27,10 +27,10 @@ export async function haveFilesChanged() : Promise<Boolean> {
     return exec("git diff", [], {
         listeners: {
             stdout: (data: Buffer) => {
-                stdout += data.tostring();
+                stdout += data.toString();
             },
             stderr: (data: Buffer) => {
-                stderr += data.tostring();
+                stderr += data.toString();
             }
         },
     }).then((exitCode: number): Promise<boolean> => {
