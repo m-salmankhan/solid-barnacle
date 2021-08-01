@@ -43,8 +43,8 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
 exports.__esModule = true;
-var glob = require('@actions/glob');
-var exec = require('@actions/exec');
+var glob_1 = require("@actions/glob");
+var exec_1 = require("@actions/exec");
 var path = require('path');
 var handlers_1 = require("./handlers");
 var constants_1 = require("../constants");
@@ -65,7 +65,7 @@ var HandleFormat = (function () {
                         exclude = inputs.exclude_dirs
                             .map(function (dir) { return "!" + dir; })
                             .join('\n');
-                        return [4, glob.create(include + "\n" + exclude)
+                        return [4, glob_1.create(include + "\n" + exclude)
                                 .then(function (g) { return g.globGenerator(); })];
                     case 1: return [2, _a.sent()];
                 }
@@ -99,57 +99,67 @@ var HandleFormat = (function () {
     HandleFormat.prototype.handle = function (command) {
         var e_1, _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _b, _c, file, ext, e_1_1;
+            var _b, _c, file, ext, exitCode, e_1_1;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
                         console.log("Starting format command.");
                         _d.label = 1;
                     case 1:
-                        _d.trys.push([1, 9, 10, 15]);
+                        _d.trys.push([1, 15, 16, 21]);
                         return [4, HandleFormat.findFiles()];
                     case 2:
                         _b = __asyncValues.apply(void 0, [_d.sent()]);
                         _d.label = 3;
                     case 3: return [4, _b.next()];
                     case 4:
-                        if (!(_c = _d.sent(), !_c.done)) return [3, 8];
+                        if (!(_c = _d.sent(), !_c.done)) return [3, 14];
                         file = _c.value;
                         console.log("   Formatting file " + file);
                         ext = path.extname(file).substring(1);
+                        exitCode = void 0;
                         if (!constants_1.clangExtensions.includes(ext)) return [3, 6];
-                        return [4, exec.exec("clang-format -i -style=" + inputs.cStyle + " " + file)];
+                        return [4, exec_1.exec("clang-format -i -style=" + inputs.cStyle + " " + file)];
                     case 5:
-                        _d.sent();
-                        return [3, 7];
+                        exitCode = _d.sent();
+                        return [3, 12];
                     case 6:
-                        if (ext) {
-                            throw new Error("Python not yet supported");
-                        }
-                        else {
-                            throw new Error("*." + ext + " files are not yet supported");
-                        }
-                        _d.label = 7;
-                    case 7: return [3, 3];
-                    case 8: return [3, 15];
+                        if (!constants_1.pythonExtensions.includes(ext)) return [3, 11];
+                        if (!(inputs.pythonStyle.toLowerCase() == "black")) return [3, 8];
+                        return [4, exec_1.exec("black " + file)];
+                    case 7:
+                        exitCode = _d.sent();
+                        return [3, 10];
+                    case 8: return [4, exec_1.exec("yapf -i -style=" + inputs.pythonStyle + " " + file)];
                     case 9:
+                        exitCode = _d.sent();
+                        _d.label = 10;
+                    case 10: return [3, 12];
+                    case 11: throw new Error("*." + ext + " files are not yet supported");
+                    case 12:
+                        if (exitCode)
+                            throw new Error("Error formatting " + file);
+                        _d.label = 13;
+                    case 13: return [3, 3];
+                    case 14: return [3, 21];
+                    case 15:
                         e_1_1 = _d.sent();
                         e_1 = { error: e_1_1 };
-                        return [3, 15];
-                    case 10:
-                        _d.trys.push([10, , 13, 14]);
-                        if (!(_c && !_c.done && (_a = _b["return"]))) return [3, 12];
+                        return [3, 21];
+                    case 16:
+                        _d.trys.push([16, , 19, 20]);
+                        if (!(_c && !_c.done && (_a = _b["return"]))) return [3, 18];
                         return [4, _a.call(_b)];
-                    case 11:
+                    case 17:
                         _d.sent();
-                        _d.label = 12;
-                    case 12: return [3, 14];
-                    case 13:
+                        _d.label = 18;
+                    case 18: return [3, 20];
+                    case 19:
                         if (e_1) throw e_1.error;
                         return [7];
-                    case 14: return [7];
-                    case 15: return [4, HandleFormat.commitAndPush()];
-                    case 16:
+                    case 20: return [7];
+                    case 21: return [4, HandleFormat.commitAndPush()];
+                    case 22:
                         _d.sent();
                         return [2];
                 }

@@ -1,11 +1,9 @@
-import {Globber} from "@actions/glob";
-
-const glob = require('@actions/glob');
-const exec = require('@actions/exec');
+import {Globber, create} from "@actions/glob";
+import {exec} from "@actions/exec";
 const path = require('path');
 
 import {Handler, handlers} from "./handlers";
-import {clangExtensions} from "../constants";
+import {clangExtensions, pythonExtensions} from "../constants";
 import * as inputs from "../inputs";
 import {haveFilesChanged, commit, push} from "../git-commands";
 
@@ -23,7 +21,7 @@ class HandleFormat implements Handler {
             .map((dir: string) => `!${dir}`)
             .join('\n');
 
-        return await glob.create(`${include}\n${exclude}`)
+        return await create(`${include}\n${exclude}`)
             .then((g: Globber) => g.globGenerator());
     }
 
@@ -43,14 +41,21 @@ class HandleFormat implements Handler {
         for await (const file of await HandleFormat.findFiles()) {
             console.log(`   Formatting file ${file}`);
             const ext = path.extname(file).substring(1);
+            let exitCode;
             // if it's one of the languages formatted by clang
             if(clangExtensions.includes(ext))
-                await exec.exec(`clang-format -i -style=${inputs.cStyle} ${file}`);
-            else if(ext) {
-                throw new Error("Python not yet supported");
-            } else {
+                exitCode = await exec(`clang-format -i -style=${inputs.cStyle} ${file}`)
+            // if it's python
+            else if(pythonExtensions.includes(ext))
+                if (inputs.pythonStyle.toLowerCase() == "black")
+                    exitCode = await exec(`black ${file}`)
+                else
+                    exitCode = await exec(`yapf -i -style=${inputs.pythonStyle} ${file}`)
+            else
                 throw new Error(`*.${ext} files are not yet supported`);
-            }
+
+            if(exitCode)
+                throw new Error(`Error formatting ${file}`);
         }
 
         await HandleFormat.commitAndPush();
