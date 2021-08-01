@@ -1,3 +1,5 @@
+import {Globber} from "@actions/glob";
+
 const glob = require('@actions/glob');
 const exec = require('@actions/exec');
 const path = require('path');
@@ -11,8 +13,7 @@ import {haveFilesChanged, commit, push} from "../git-commands";
 * Deals with /format command
 * */
 class HandleFormat implements Handler {
-    async handle(command: string) {
-        console.log("Starting format command.");
+    private static async findFiles():Promise<AsyncGenerator<string, void, unknown>> {
         let include:string =
             inputs.fileExtensions
                 .map((ext: string) => `**/*.${ext}`)
@@ -22,9 +23,24 @@ class HandleFormat implements Handler {
             .map((dir: string) => `!${dir}`)
             .join('\n');
 
-        const globber = await glob.create(`${include}\n${exclude}`)
+        return await glob.create(`${include}\n${exclude}`)
+            .then((g: Globber) => g.globGenerator());
+    }
 
-        for await (const file of globber.globGenerator()) {
+    private static async commitAndPush(): Promise<void> {
+        console.log("Committing and pushing changes...")
+        if(await haveFilesChanged()) {
+            await commit("Auto-formatted Code");
+            await push();
+        } else {
+            console.log("Nothing has changed. Nothing to commit!");
+        }
+    }
+    
+    async handle(command: string) {
+        console.log("Starting format command.");
+
+        for await (const file of await HandleFormat.findFiles()) {
             console.log(`   Formatting file ${file}`);
             const ext = path.extname(file).substring(1);
             // if it's one of the languages formatted by clang
@@ -37,14 +53,7 @@ class HandleFormat implements Handler {
             }
         }
 
-        console.log("Committing and pushing changes...")
-
-        if(await haveFilesChanged()) {
-            await commit("Auto-formatted Code");
-            await push();
-        } else {
-            console.log("Nothing has changed. Nothing to commit!");
-        }
+        await HandleFormat.commitAndPush();
     }
 }
 

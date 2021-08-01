@@ -53,27 +53,63 @@ var git_commands_1 = require("../git-commands");
 var HandleFormat = (function () {
     function HandleFormat() {
     }
-    HandleFormat.prototype.handle = function (command) {
-        var e_1, _a;
+    HandleFormat.findFiles = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var include, exclude, globber, _b, _c, file, ext, e_1_1;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            var include, exclude;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
-                        console.log("Starting format command.");
                         include = inputs.fileExtensions
                             .map(function (ext) { return "**/*." + ext; })
                             .join('\n');
                         exclude = inputs.exclude_dirs
                             .map(function (dir) { return "!" + dir; })
                             .join('\n');
-                        return [4, glob.create(include + "\n" + exclude)];
+                        return [4, glob.create(include + "\n" + exclude)
+                                .then(function (g) { return g.globGenerator(); })];
+                    case 1: return [2, _a.sent()];
+                }
+            });
+        });
+    };
+    HandleFormat.commitAndPush = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log("Committing and pushing changes...");
+                        return [4, git_commands_1.haveFilesChanged()];
                     case 1:
-                        globber = _d.sent();
-                        _d.label = 2;
+                        if (!_a.sent()) return [3, 4];
+                        return [4, git_commands_1.commit("Auto-formatted Code")];
                     case 2:
-                        _d.trys.push([2, 9, 10, 15]);
-                        _b = __asyncValues(globber.globGenerator());
+                        _a.sent();
+                        return [4, git_commands_1.push()];
+                    case 3:
+                        _a.sent();
+                        return [3, 5];
+                    case 4:
+                        console.log("Nothing has changed. Nothing to commit!");
+                        _a.label = 5;
+                    case 5: return [2];
+                }
+            });
+        });
+    };
+    HandleFormat.prototype.handle = function (command) {
+        var e_1, _a;
+        return __awaiter(this, void 0, void 0, function () {
+            var _b, _c, file, ext, e_1_1;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        console.log("Starting format command.");
+                        _d.label = 1;
+                    case 1:
+                        _d.trys.push([1, 9, 10, 15]);
+                        return [4, HandleFormat.findFiles()];
+                    case 2:
+                        _b = __asyncValues.apply(void 0, [_d.sent()]);
                         _d.label = 3;
                     case 3: return [4, _b.next()];
                     case 4:
@@ -112,22 +148,10 @@ var HandleFormat = (function () {
                         if (e_1) throw e_1.error;
                         return [7];
                     case 14: return [7];
-                    case 15:
-                        console.log("Committing and pushing changes...");
-                        return [4, git_commands_1.haveFilesChanged()];
+                    case 15: return [4, HandleFormat.commitAndPush()];
                     case 16:
-                        if (!_d.sent()) return [3, 19];
-                        return [4, git_commands_1.commit("Auto-formatted Code")];
-                    case 17:
                         _d.sent();
-                        return [4, git_commands_1.push()];
-                    case 18:
-                        _d.sent();
-                        return [3, 20];
-                    case 19:
-                        console.log("Nothing has changed. Nothing to commit!");
-                        _d.label = 20;
-                    case 20: return [2];
+                        return [2];
                 }
             });
         });
