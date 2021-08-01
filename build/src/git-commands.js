@@ -25,7 +25,7 @@ exports.checkoutBranch = checkoutBranch;
 // Check output of git diff to see if files have changed
 // TODO: there has to be a better way of doing this.
 async function haveFilesChanged() {
-    return exec_1.exec('git diff --quiet').then((exitCode) => {
+    return exec_1.exec('git diff', [""]).then((exitCode) => {
         console.log("GIT DIFF RETURNED " + exitCode);
         return Promise.resolve(!exitCode);
     });
