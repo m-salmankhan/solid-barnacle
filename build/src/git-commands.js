@@ -26,6 +26,7 @@ exports.checkoutBranch = checkoutBranch;
 // TODO: there has to be a better way of doing this.
 async function haveFilesChanged() {
     return exec_1.exec('git diff --quiet').then((exitCode) => {
+        console.log("GIT DIFF RETURNED " + exitCode);
         return Promise.resolve(!exitCode);
     });
 }
